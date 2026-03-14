@@ -71,7 +71,7 @@ function unlockAudioOnce() {
 
   // Start bgm once audio is unlocked
   soundManager?.play("music");
-  // Loop
+  // Loop bgm
   const music = soundManager.sfx["music"];
   if (music) music.setLoop(true);
 }
