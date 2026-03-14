@@ -179,12 +179,12 @@ export class Game {
     if (this.sound) {
       this._unsubs.push(
         this.events.on("leaf:collected", () => this.sound.play("leafCollect")),
-      );
+      ); // Changed to match sfx name
       this._unsubs.push(
         this.events.on("player:damaged", () =>
           this.sound.play("receiveDamage"),
         ),
-      );
+      ); // Changed to match sfx name
       this._unsubs.push(
         this.events.on("player:died", () => this.sound.play("die")),
       );
@@ -196,7 +196,7 @@ export class Game {
       );
       this._unsubs.push(
         this.events.on("player:jump", () => this.sound.play("jump")),
-      );
+      ); // Added jump sfx
     }
 
     if (this.debug) {
