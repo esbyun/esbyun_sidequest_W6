@@ -37,7 +37,10 @@ import { LevelLoader } from "./src/LevelLoader.js";
 import { Game } from "./src/Game.js";
 import { ParallaxBackground } from "./src/ParallaxBackground.js";
 import { loadAssets } from "./src/AssetLoader.js";
-import { applyIntegerScale, installResizeHandler } from "./src/utils/IntegerScale.js";
+import {
+  applyIntegerScale,
+  installResizeHandler,
+} from "./src/utils/IntegerScale.js";
 
 import { CameraController } from "./src/CameraController.js";
 import { InputManager } from "./src/InputManager.js";
@@ -65,6 +68,12 @@ function unlockAudioOnce() {
   if (audioUnlocked) return;
   audioUnlocked = true;
   if (typeof userStartAudio === "function") userStartAudio();
+
+  // Start bgm once audio is unlocked
+  soundManager?.play("music");
+  // Loop
+  const music = soundManager.sfx["music"];
+  if (music) music.setLoop(true);
 }
 
 // Prevent the browser from stealing keys (space/arrows) for scrolling.
@@ -129,6 +138,13 @@ async function boot() {
   // --- Audio registry ---
   // (AudioContext may still be locked until the user clicks/presses a key.)
   soundManager = new SoundManager();
+
+  // Load sfx
+  soundManager.load("hit", "assets/sfx/hitEnemy.wav");
+  soundManager.load("jump", "assets/sfx/jump.wav");
+  soundManager.load("music", "assets/sfx/music.wav");
+  soundManager.load("receiveDamage", "assets/sfx/receiveDamage.wav");
+  soundManager.load("leafCollect", "assets/sfx/leafCollect.wav");
 
   // --- Parallax layer defs (VIEW) ---
   const defs = levelPkg.level?.view?.parallax ?? [];
@@ -204,6 +220,19 @@ function initRuntime() {
   // IMPORTANT: subscribe ONCE (not in draw)
   game.events.on("level:restarted", () => {
     cameraController?.reset();
+
+    // Connect events to sfx
+    this.events.on("leaf:collected", () => {
+      this.soundManager.play("leafCollect");
+    });
+
+    this.events.on("player:damaged", () => {
+      this.soundManager.play("receiveDamage");
+    });
+
+    this.events.on("enemy:hit", () => {
+      this.soundManager.play("hit");
+    });
   });
 
   // VIEW: parallax background renderer
