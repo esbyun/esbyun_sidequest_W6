@@ -27,3 +27,4 @@ export class SoundManager {
   play(name) {
     this.sfx[name]?.play();
   }
+}
